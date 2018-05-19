@@ -1,0 +1,146 @@
+speller.c calls load on dic file
+calls check on each word in text file and prints misspelled words
+calls size to determine num of words in dictionary
+calls unload to free up memory
+
+dic.c
+load - dic
+check - if given word is in dic
+size - returns num of words in dic
+unload - frees dic from memory
+
+check - string is in dic or not
+case insensitivity
+assume strings with only alpha char / apostrophes
+
+load
+hashtable - array of linked lists
+where each element of the array is a node *
+hashtable[hash(word)]
+strcasecmp - search in that linked list
+nodes - has a value, and pointer to next node
+linked lists - dont lose any, last node points to null
+typedef struct node
+{
+char word[LENGTH + 1];
+struct node *next;
+}
+node;
+node *node1 = malloc(sizeof(node));
+node *node1 = malloc(sizeof(node));
+malloc will give us the pointer, which indicates a spot in memory where its reserved for our char array and a pointer to a node
+whenever we are creating a node we are malloc(ing) a node pointer
+strcpy(node1->word, "");
+strcpy(node2->word, "");
+node1->next = node2;
+
+typedef struct node
+{
+char word[LENGTH + 1];
+struct node *next;
+}
+node;
+node *hashtable[50];
+
+//scan dic word by word
+while (fscanf(file, "%s", word) != EOF)
+{
+// for every word we scan we want to malloc a node for it
+whenever we create a node we want ot check did malloc succed
+make sure pointer to that node doesn't return null
+
+node *new_node = malloc(sizeof(malloc));
+if (new_node == NULL)
+{
+unload();
+return false;
+}
+strcpy(new_node->word, word);
+}
+
+//false way
+head = new_node;
+
+//correct
+new_node->next = head;
+head = new_node;
+
+hash function - takes a string
+returns an index (index < the num of buckets
+deterministic (same value needs to map to same bucket every time)
+
+hash the word
+new_node-> word - has word from dic
+hashing new_node->word - gives us the index of a bucket in the hash table
+insert into linked list
+
+traversing linked lists
+node *cursor = head;
+while (cursor != NULL)
+{
+//do something
+cursor = cursor->next;
+}
+not making new node, simply creating a pointer that will point to preexisting nodes in my linked list
+loop will execute as long as cursor is not NULL
+
+tries
+typedef struct node
+{
+bool is_word;
+struct node *children[27];
+}
+node;
+node *root;
+
+//scanning through
+for every word, iterate through the trie
+each element in children corresponds to a different letter
+check value at children[i] - if NULL, malloc a new node, have children[i] point to it
+ - if not NULL, move to new node and continue
+ if at the end of word, set is_word to true
+
+example -
+"fox"
+f: root->children[5]
+o: root->children[5]->children[14]
+x: root->children[5]->children[14]->children[23]
+is_word is set to true
+
+f: root->children[5]
+o: root->children[5]->children[14]
+o: root->children[5]->children[14]->children[14]
+
+d: root->children[3]
+o: root->children[3]->children[14]
+g: root->children[3]->children[6]
+
+unload
+free linked list
+node *cursor = head; //head is very first node in a linked list
+
+while(cursor != NULL)
+{
+node *temp = cursor;
+cursor = cursor->next;
+free(temp);
+}
+
+unload from bottom to top
+travel to lowest possible node
+ - free all pointers in children
+  - backtrack upwards, freeing all elements in each children array until you hit root node
+  recursion!
+
+  valgrind -v --leak-check=full austinpowers.txt
+
+typedef struct node
+{
+int value;
+struct node* next
+}
+node;
+
+node* head = malloc(sizeof(node));
+cursor->next;
+head->new_node;
