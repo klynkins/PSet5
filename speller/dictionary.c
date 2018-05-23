@@ -18,19 +18,29 @@ node;
 node *hashtable[26];
 
 int wordcount = 0;
+node *head = NULL;
+
+
+// define a hash function
+int hash_function(const char *word)
+{
+    int hash = (tolower(word[0]) - 'a');
+    return hash;
+
+}
 
 // Returns true if word is in dictionary else false
 bool check(const char *word)
 {
-    int hash = hash_function(word);
-    if(hashtable[hash] == NULL)
+    int hash_num = hash_function(word);
+    if(hashtable[hash_num] == NULL)
     {
         return false;
     }
 
-    else if(hashtable[hash] != NULL)
+    else if(hashtable[hash_num] != NULL)
     {
-        node *cursor = hashtable[hash];
+        node *cursor = hashtable[hash_num];
 
         while(cursor != NULL)
         {
@@ -58,14 +68,18 @@ bool load(const char *dictionary)
     FILE *dic = fopen(dictionary, "r");
     if (dic == NULL)
     {
-        fprintf(stderr, "Could not open %s.\n", file);
-        return 2;
+        fprintf(stderr, "Could not open dictonary\n");
+        return false;
     }
 
     char word[LENGTH + 1];
 
-    while (fscanf(file, "%s", word) != EOF)
+    //scan dic word by word
+    while (fscanf(dic, "%s", word) != EOF)
     {
+        // for every word we scan we want to malloc a node for it
+        //whenever we create a node we want ot check did malloc succed
+        //make sure pointer to that node doesn't return null
         node *new_node = malloc(sizeof(node));
         memset(new_node, 0, sizeof(node));
         if(new_node == NULL)
@@ -80,7 +94,8 @@ bool load(const char *dictionary)
 
         if(hashtable[hashed] == NULL)
             {
-            hashtable[hased] = new_node;
+            hashtable[hashed] = new_node;
+            head = new_node;
             }
             else
             {
@@ -89,7 +104,7 @@ bool load(const char *dictionary)
                 head = new_node;
             }
     }
-    fclose(fp);
+    fclose(dic);
     return true;
 }
 
@@ -103,12 +118,18 @@ unsigned int size(void)
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void)
 {
-    while(cursor != NULL)
+    for (int i = 0, n = 26; i < n; i++)
     {
-    node *temp = cursor;
-    cursor = cursor->next;
-    free(temp);
-    cursor = next;
+        if(hashtable[i] != NULL)
+        {
+            node *cursor = hashtable[i];
+            while(cursor != NULL)
+            {
+                node *temp = cursor;
+                cursor = cursor->next;
+                free(temp);
+            }
+        }
     }
     // TODO
     return true;
